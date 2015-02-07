@@ -1,4 +1,4 @@
-# CPM-coffe-star
+# CPM Coffee Star
 Practica 1 de la materia Organización de computadores (2015-1)
 
 
@@ -12,21 +12,21 @@ Tabla de uso de la memoria
 ---------------------------
 ```DIR = DESCRIPTION```
   
- * EE0 = 0 CONST
- * EE1 = 1 CONST
- * EE2 = 2 CONST
- * EE3 = 3 CONST
- * EE4 = Cantidad de empleados *(16 bits)*
- * EE5 = Sueldo basico empleados *(32 bits)*
- * EE6 = Reservado
- * EE7 = Total pago a empleado de grupo *(32 bits)*
- * EE8 = Reservado
- * EE9 = Sueldo *(32 bits)*
- * EEA = Reservado
- * EEB = SMLMV *(32 bits)*
- * EEC = Reservado
- * EED = Numero salarios minimos *(16 bits)*
- * EEE = Resevado
+ * 0xEE0 = 0 CONST
+ * 0xEE1 = 1 CONST
+ * 0xEE2 = 2 CONST
+ * 0xEE3 = 3 CONST
+ * 0xEE4 = Cantidad de empleados *(16 bits)*
+ * 0xEE5 = Sueldo basico empleados *(32 bits)*
+ * 0xEE6 = Reservado
+ * 0xEE7 = Total pago a empleado de grupo *(32 bits)*
+ * 0xEE8 = Reservado
+ * 0xEE9 = Sueldo *(32 bits)*
+ * 0xEEA = Reservado
+ * 0xEEB = SMLMV *(32 bits)*
+ * 0xEEC = Reservado
+ * 0xEED = Numero salarios minimos *(16 bits)*
+ * 0xEEE = Resevado
 
 Links de utilidad
 -----------------
