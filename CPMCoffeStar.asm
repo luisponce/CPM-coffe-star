@@ -1,5 +1,5 @@
 #SimuProc 1.4.2.0
- ; Se cargan los valores 0, 1, 2 y 3 en momeria para
+ ; Se cargan los valores 0, 1, 2 y 3 en memoria para
  ; comparaciones
 
  ; CLA ; Limpiar AX, AX=0
@@ -16,16 +16,16 @@
  ; EE1 = 1
  ; EE2 = 2
  ; EE3 = 3
- ; EE4 = Cantidad de empleados
- ; EE5 = Sueldo basico empleados
+ ; EE4 = Cantidad de empleados (16 bits)
+ ; EE5 = Sueldo basico empleados (32)
  ; EE6 = N/A
- ; EE7 = Total pago a empleado de grupo
+ ; EE7 = Total pago a empleado de grupo (32)
  ; EE8 = N/A
- ; EE9 = Sueldo
+ ; EE9 = Sueldo (32)
  ; EEA = N/A
- ; EEB = SMLMV
+ ; EEB = SMLMV (32)
  ; EEC = N/A
- ; EED = Numero salarios minimos
+ ; EED = Numero salarios minimos (16)
  ; EEE = N/A
  ;
 
@@ -62,14 +62,15 @@
  STF EE5
 
  ; OPERACIONES
- LDF EE5     ;Pasar de memoria a Ax-Bx 32bits
- DIVF EEB    ;Ax dividido la posicion de memoria y almacena en AX en 32bits
- FTOI       ; Pasae de real de 32bits a registro de 16bits
- MOV EED,AX     ;Guarda lo que esta en AX en la posicion de memoria en 32bits
+ LDF EE5     ;Pasar de Sueldo basico empleados a Ax-Bx 32bits
+ DIVF EEB    ;Ax-Bx dividido SMLMV (32bits) y almacena en Ax en 32bits
+ FTOI       ; Pasa de flotante de 32bits a Entero de 16bits
+ MOV EED,AX     ;Guarda lo que esta en AX en Numero salarios minimos en 16bits
 
  MSG Valor a pagar:
- MOV AX,EE6
- EAP ; Imprimir el auxiliar
+ MOV AX,EE6 
+ EAP ; Imprimir Ax
+ 
  MSG ------------------------------------------
  MSG Desea ingresar otro?
  MSG  1. SI
@@ -77,11 +78,11 @@
  LDT
 
  CMP EE1
- JEQ 010
+ JEQ 010 ;si es 1 salta a Ingresar nomina
  CMP EE2
- JEQ 000
+ JEQ 000 ;si es 2 salta a home
  MSG Ingrese una opcion valida
- JMP 01F
+ JMP 01F ;si no ingresa una opcion valida
 
  MSG Totales
  MOV AX,EED
