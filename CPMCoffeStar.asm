@@ -40,11 +40,11 @@
  LDT INGRESE LA OPCION:
 
  CMP EE1 ; Compara AX con 1
- JEQ 010; Si son iguales salta a
+ JEQ 010; Si son iguales salta a ingresar nomina
  CMP EE2 ; Compara AX con 2
- JEQ 02A; Si son iguales salta a
+ JEQ 02B; Si son iguales salta a totales
  CMP EE3 ; Compara AX con 3
- JEQ 00F ; Si son iguales salta a
+ JEQ 00F ; Si son iguales salta a terminar programa
  MSG Ingrese una opcion valida
  JMP 006 ; Salta a ingresar opcion
 
@@ -68,8 +68,9 @@
  MOV EED,AX     ;Guarda lo que esta en AX en Numero salarios minimos en 16bits
 
  MSG Valor a pagar:
- MOV AX,EE6 
- EAP ; Imprimir Ax
+ LDF EE7 ;cargar total pago a empleado del grupo
+ OUT 1,AX ;escribir total pago a empleado del grupo
+ NOP
  
  MSG ------------------------------------------
  MSG Desea ingresar otro?
