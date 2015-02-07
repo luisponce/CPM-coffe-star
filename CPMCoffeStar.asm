@@ -1,32 +1,24 @@
 #SimuProc 1.4.2.0
- ; Se cargan los valores 0, 1, 2 y 3 en memoria para
- ; comparaciones
-
- ; CLA ; Limpiar AX, AX=0
- ; MOV FFF,AX ; Pone FFF como AX
- ; INC AX ; Incrementa en 1 AX , AX=1
- ; MOV FFE,AX
- ; INC AX ; AX=2
- ; MOV FFD,AX
- ; INC AX ; AX=3
- ; MOV FFC,AX
-
  ;
- ; EEO = 0
- ; EE1 = 1
- ; EE2 = 2
- ; EE3 = 3
+ ; Uso manual de la memoria
+ ; ---------------------------------------------
+ ; DIR = DESCRIPTION
+ ; ---------------------------------------------
+ ; EEO = 0 CONST
+ ; EE1 = 1 CONST
+ ; EE2 = 2 CONST
+ ; EE3 = 3 CONST
  ; EE4 = Cantidad de empleados (16 bits)
- ; EE5 = Sueldo basico empleados (32)
- ; EE6 = N/A
- ; EE7 = Total pago a empleado de grupo (32)
- ; EE8 = N/A
- ; EE9 = Sueldo (32)
- ; EEA = N/A
- ; EEB = SMLMV (32)
- ; EEC = N/A
- ; EED = Numero salarios minimos (16)
- ; EEE = N/A
+ ; EE5 = Sueldo basico empleados (32 bits)
+ ; EE6 = Reservado
+ ; EE7 = Total pago a empleado de grupo (32 bits)
+ ; EE8 = Reservado
+ ; EE9 = Sueldo (32 bits)
+ ; EEA = Reservado
+ ; EEB = SMLMV (32 bits)
+ ; EEC = Reservado
+ ; EED = Numero salarios minimos (16 bits)
+ ; EEE = Resevado
  ;
 
  ; Home de la aplicacion
@@ -39,16 +31,16 @@
  MSG   3. Salir
  LDT INGRESE LA OPCION:
 
- CMP EE1 ; Compara AX con 1
- JEQ 010; Si son iguales salta a ingresar nomina
- CMP EE2 ; Compara AX con 2
- JEQ 02B; Si son iguales salta a totales
- CMP EE3 ; Compara AX con 3
- JEQ 00F ; Si son iguales salta a terminar programa
+ CMP EE1 	; Compara AX con 1
+ JEQ 010	; Si son iguales salta a ingresar nomina
+ CMP EE2 	; Compara AX con 2
+ JEQ 02B	; Si son iguales salta a totales
+ CMP EE3 	; Compara AX con 3
+ JEQ 00F 	; Si son iguales salta a terminar programa
  MSG Ingrese una opcion valida
- JMP 006 ; Salta a ingresar opcion
+ JMP 006 	; Salta a ingresar opcion
 
- HLT ; Terminar programa
+ HLT 		; Terminar programa
 
  ; Futura implementacion
 
@@ -62,14 +54,14 @@
  STF EE5
 
  ; OPERACIONES
- LDF EE5     ;Pasar de Sueldo basico empleados a Ax-Bx 32bits
- DIVF EEB    ;Ax-Bx dividido SMLMV (32bits) y almacena en Ax en 32bits
- FTOI       ; Pasa de flotante de 32bits a Entero de 16bits
- MOV EED,AX     ;Guarda lo que esta en AX en Numero salarios minimos en 16bits
+ LDF EE5     	; Pasar de Sueldo basico empleados a Ax-Bx 32bits
+ DIVF EEB    	; Ax-Bx dividido SMLMV (32bits) y almacena en Ax en 32bits
+ FTOI       	; Pasa de flotante de 32bits a Entero de 16bits
+ MOV EED,AX     ; Guarda lo que esta en AX en Numero salarios minimos en 16bits
 
  MSG Valor a pagar:
- LDF EE7 ;cargar total pago a empleado del grupo
- OUT 1,AX ;escribir total pago a empleado del grupo
+ LDF EE7 	; Cargar total pago a empleado del grupo
+ OUT 1,AX 	; Escribir total pago a empleado del grupo
  NOP
  
  MSG ------------------------------------------
@@ -79,11 +71,11 @@
  LDT
 
  CMP EE1
- JEQ 010 ;si es 1 salta a Ingresar nomina
+ JEQ 010 	; Si es 1 salta a Ingresar nomina
  CMP EE2
- JEQ 000 ;si es 2 salta a home
+ JEQ 000 	; Si es 2 salta a home
  MSG Ingrese una opcion valida
- JMP 01F ;si no ingresa una opcion valida
+ JMP 01F 	; Si no ingresa una opcion valida
 
  MSG Totales
  MOV AX,EED
