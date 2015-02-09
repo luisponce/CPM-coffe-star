@@ -18,7 +18,8 @@
  ; EEB = SMLMV (32 bits)
  ; EEC = Reservado
  ; EED = Numero salarios minimos (16 bits)
- ; EEE = Resevado
+ ; EEE = Flag de salario minimo no entero (0 si es entero, 1 si es por ejm 2.4)
+ 
  ;
 
  ; Home de la aplicacion
@@ -58,6 +59,35 @@
  DIVF EEB    	; Ax-Bx dividido SMLMV (32bits) y almacena en Ax en 32bits
  FTOI       	; Pasa de flotante de 32bits a Entero de 16bits
  MOV EED,AX     ; Guarda lo que esta en AX en Numero salarios minimos en 16bits
+ MOV AX, CX
+ CMP EE0        ; comparar si el reciduo de la div es cero
+ JEQ 021         ; SI es cero salte a setFlag
+ MOV EEE, EE1    ; SINO carga 1 en El flag de salario minimo no entero
+ JMP 022         ; salta a fin si
+ MOV EEE, EE0    ; ENTONCES SetFlag, pone el flag de salario minimo no entero en cero
+ NOP ; FIN SI
+ 
+ ; subsidio de transporte
+ MOV AX, EE2     ; Guarda 2 en AX
+ CMP EED         ; Compara el numero de salarios minimos con 2
+ JME             ; SI el numero de salarios minimos es menor que 2 ir a calcular subsidio
+ JEQ             ; SINO SI es igual a dos ir a comparar flag
+ JMP ; FIN SI
+ 
+ ; compar flag
+ CLA             ; AX=0
+ CMP EEE         ; compara el flag con 0 para saber si tiene decimales
+ JEQ             ; SI tiene decimales ir a calcular subsidio
+ JMP ; Fin si
+ 
+ ; calcular subsidio
+ 
+ 
+ 
+ 
+ 
+ 
+ 
 
  MSG Valor a pagar:
  LDF EE7 	; Cargar total pago a empleado del grupo
