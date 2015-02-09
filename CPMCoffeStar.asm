@@ -19,7 +19,8 @@
  ; EEC = Reservado
  ; EED = Numero salarios minimos (16 bits)
  ; EEE = Flag de salario minimo no entero (0 si es entero, 1 si es por ejm 2.4)
- 
+ ; EEF =
+ ; EEG = Reservado
  ;
 
  ; Home de la aplicacion
@@ -81,7 +82,8 @@
  JMP ; Fin si
  
  ; calcular subsidio
- 
+ LDF EE4         ; Guarda el sueld basico en AX
+ MULF EEF
  
  
  
@@ -127,3 +129,8 @@
  ; Constantes temporales
 #EE6
  0000000000001010
+ 
+#EEF
+ 0011110101001100
+ 1100110011000000
+ 
