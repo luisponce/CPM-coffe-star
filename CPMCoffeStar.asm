@@ -19,7 +19,7 @@
  ; EEC = Reservado
  ; EED = Numero salarios minimos (16 bits)
  ; EEE = Flag de salario minimo no entero (0 si es entero, 1 si es por ejm 2.4)
- ; EEF = Porsentaje para calcular el subsidio de transporte (32 bits)
+ ; EEF = CONST Subsidio de transporte (32 bits)
  ; EF0 = Reservado
  ; EF1 = Temporal
  ; EF2 = Aportes de salud empleado
@@ -113,22 +113,22 @@
  JMP 034         ; Fin si
  
  ; calcular subsidio
- LDF EE5         ; Guarda el sueldo basico en AX
- MULF EEF        ; Multiplica el sueldo basico por el porcentaje (EEF) y almacena en AX
+ LDF EEF         ; Carga el subsidio de transporte
  ADDF EE9        ; Suma al sueldo actual el subsidio de transporte
- STF EE9      ; Actualiza el sueldo actual en el espacio de memoria correspondiente
+ STF EE9         ; Actualiza el sueldo actual en el espacio de memoria correspondiente
 
  ; Aportes salud empleados
  LDF EFA         ; Carga 0.04
  MULF EE5        ; multiplica 0.04 por el sueldo basico
  STF EF2         ; guarda el Aportes de la salud del empleado en memoria
  
- LDF EE9         ; Guarda el sueldo actual en AX
+ LDF EE9         ; Carga el sueldo actual en AX-BX
  SUBF EF2        ; Resta al sueldo actual el Aportes de la salud
  STF EE9         ; Actualiza el sueldo actual
  
- LDF F00         ; Guarda el numero de empleados en AX-BX
+ LDF F00         ; Carga el numero de empleados en AX-BX
  MULF EF2        ; multiplica lo que paga un empleado de salud por la cantidad de empleados
+ ADDF EF4        ; Suma al total de salud de empleados del grupo con el total acumulado
  STF EF4         ; guarda el total de salud de empleados en memoria
  
  ; Aportes salud empresa
@@ -136,18 +136,23 @@
  MULF EE5        ; multiplica 0.045 por el sueldo basico
  STF EF6         ; guarda el Aportes de la salud de la empresa en memoria
  
- LDF F00         ; Guarda el numero de empleados en AX-BX
+ LDF F00         ; Carga el numero de empleados en AX-BX
  MULF EF6        ; multiplica lo que paga la empresa de saludo por un empleado por la cantidad de empleados
+ ADDF EF8        ; Suma al total de salud de la empresa del grupo con el total acumulado
  STF EF8         ; guarda el total de salud de la empresa en memoria
  
  ; Aporte de pensiones empleado
- LDF EE9          ; Guarda el valor de aportes a pension de un empleado que es el mismo que los aportes a la salud
+ LDF EFA          ; Carga 0.04
+ MULF EE5         ; multiplica 0.04 por el sueldo basico
  STF F02          ; guarda el valores de aportes a pension en memoria
+ 
+ LDF EE9          ; Carga el sueldo actual en AX-BX
  SUBF F02         ; resta los aportes a pensiones del sueldo actual
  STF EE9          ; actualiza el sueldo actual
  
- LDF F00          ; Grarda el numero de empleados en AX-BX
+ LDF F00          ; Carga el numero de empleados en AX-BX
  MULF F02         ; multiplica lo que paga un empleado de pensiones por la cantidad de empleados
+ ADDF F04         ; Suma al total de pensiones de empleado del grupo con el total acumulado
  STF F04          ; guarda el total de pensiones de empleados en memoria
  
  ; Aporte de pensiones empresa
@@ -157,7 +162,10 @@
  
  LDF F00          ; Cargar en AX-BX el numero de empleados
  MULF F06         ; Multiplicar el numero de empleados por el total de pensiones empresa
+ ADDF F08         ; Suma al total de pensiones de la empresa del grupo con el total acumulado
  STF F08          ; guardar el total de pensiones de empresa en memoria
+ 
+ 
 
  MSG Valor a pagar:
  LDF EE7        ; Cargar total pago a empleado del grupo
@@ -199,8 +207,8 @@
  0000000000001010
  
 #EEF
- 0011110101001100
- 1100110011000000
+ 0100011110010000
+ 1000100000000000
 
 #EFA
  0011110100100011
