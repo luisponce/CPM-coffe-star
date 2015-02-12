@@ -46,6 +46,29 @@
  ; F07 = Reservado
  ; F08 = Total aportes a pensiones empresa
  ; F09 = Reservado
+ ; F0A = 0.01 CONST
+ ; F0B = Reservado
+ ; F0C = 0.012 CONST
+ ; F0D = Reservado
+ ; F0E = 0.014 CONST
+ ; F0F = Reservado
+ ; F10 = 0.016 CONST
+ ; F11 = Reservado
+ ; F12 = 0.018 CONST
+ ; F13 = Reservado
+ ; F14 = 0.02 CONST
+ ; F15 = Reservado
+ ; F16 = 3 CONST
+ ; F17 = 4 CONST
+ ; F18 = 15 CONST
+ ; F19 = 16 CONST
+ ; F1A = 17 CONST
+ ; F1B = 18 CONST
+ ; F1C = 19 CONST
+ ; F1D = Fondo de solidaridad de un empleado
+ 
+ 
+ 
 
  ; Home de la aplicacion
 
@@ -164,6 +187,67 @@
  MULF F06         ; Multiplicar el numero de empleados por el total de pensiones empresa
  ADDF F08         ; Suma al total de pensiones de la empresa del grupo con el total acumulado
  STF F08          ; guardar el total de pensiones de empresa en memoria
+ 
+ ; Aportes al fondo de solidaridad
+ LDF EED          ; Cargar numero de SMLMV
+ CMP F17          ; Compara con 4
+ JME ;FIN SI
+ CMP F16          ; Compara con 3
+ JMA ;ir a 1%
+ CMP F18          ; Compara con 15
+ JMA ; ir a 1.2%
+ CMP F19          ; Compara con 16
+ JMA ; ir a 1.4%
+ CMP F1A          ; Compara con 17
+ JMA ; ir a 1.6%
+ CMP F1B          ; Compara con 18
+ JMA ; ir a 1.8%
+ CMP F1C          ; Compara con 19
+ JMA ; ir a 2%
+
+ ; Asignar 1% fondo de solidaridad
+ LDF EE5          ; Cargar salario basico
+ MULF F0A         ; Multiplica por 1%
+ STF F1D          ; Guarda aporte fondo de solidaridad
+ LDF EED          ; Carga numero de SMLMV
+ JMP              ; Salta a 1.2%
+ 
+ ; Asignar 1.2% fondo de solidaridad
+ LDF EE5          ; Cargar salario basico
+ MULF F0C         ; Multiplica por 1.2%
+ STF F1D          ; Guarda aporte fondo de solidaridad
+ LDF EED          ; Carga numero de SMLMV
+ JMP              ; Salta a 1.4%
+ 
+ ; Asignar 1.4% fondo de solidaridad
+ LDF EE5          ; Cargar salario basico
+ MULF F0E         ; Multiplica por 1.4%
+ STF F1D          ; Guarda aporte fondo de solidaridad
+ LDF EED          ; Carga numero de SMLMV
+ JMP              ; Salta a 1.6%
+ 
+ ; Asignar 1.6% fondo de solidaridad
+ LDF EE5          ; Cargar salario basico
+ MULF F10         ; Multiplica por 1.6%
+ STF F1D          ; Guarda aporte fondo de solidaridad
+ LDF EED          ; Carga numero de SMLMV
+ JMP              ; Salta a 1.8%
+ 
+ ; Asignar 1.8% fondo de solidaridad
+ LDF EE5          ; Cargar salario basico
+ MULF F12         ; Multiplica por 1.8%
+ STF F1D          ; Guarda aporte fondo de solidaridad
+ LDF EED          ; Carga numero de SMLMV
+ JMP              ; Salta a 2%
+ 
+ ; Asignar 2% fondo de solidaridad
+ LDF EE5          ; Cargar salario basico
+ MULF F14         ; Multiplica por 2%
+ STF F1D          ; Guarda aporte fondo de solidaridad
+ LDF EED          ; Carga numero de SMLMV
+ JMP              ; Salta a END
+
+ ; END
  
  
 
