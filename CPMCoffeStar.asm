@@ -152,16 +152,16 @@
  NOP             ; FIN SI
  
  ; subsidio de transporte
- MOV AX,EE2     ; Guarda 2 en AX
+ MOV AX,EE2      ; Guarda 2 en AX
  CMP EED         ; Compara el numero de salarios minimos con 2
- JMA 030         ; SI el numero de salarios minimos es menor que 2 ir a calcular subsidio
- JEQ 02C         ; SINO SI es igual a dos ir a comparar flag
+ JMA 031         ; SI el numero de salarios minimos es menor que 2 ir a calcular subsidio
+ JEQ 02D         ; SINO SI es igual a dos ir a comparar flag
  JMP 034         ; FIN SI
  
  ; compar flag
  MOV AX,EE1      ; AX=0
  CMP EEE         ; compara el flag con 1 para saber si tiene decimales
- JEQ 030         ; SI tiene decimales ir a calcular subsidio
+ JEQ 031         ; SI tiene decimales ir a calcular subsidio
  JMP 034         ; Fin si
  
  ; calcular subsidio
@@ -170,7 +170,7 @@
  STF EE9         ; Actualiza el sueldo actual en el espacio de memoria correspondiente
 
  ; Aportes salud empleados
- LDF EFA         ; Carga 0.04
+ LDF EFA         ; Carga 0.04 ...Fin Si
  MULF EE5        ; multiplica 0.04 por el sueldo basico
  STF EF2         ; guarda el Aportes de la salud del empleado en memoria
  
@@ -299,7 +299,7 @@
  DIVF F2A         ; Divide por UVT
  MOV EF1,CX       ; Guarda los decimales en un temporal
  FTOI             ; Pasa a entero
- MOV F2A,AX       ; Guarda el numero de UVT en memoria
+ MOV F2D,AX       ; Guarda el numero de UVT en memoria
  MOV AX,EF1       ; Carga temporal
  CMP EE0          ; comparar si el reciduo de la div es cero
  JEQ 09A          ; Si es cero, ir a poner cero en flag
@@ -309,16 +309,88 @@
  
  ; Poner cero en flag
  MOV AX,EE0       ; Carga 0
- MOV F2C, AX      ; Pone Flag de UVT en 0
+ MOV F2C,AX      ; Pone Flag de UVT en 0
  JMP 09D          ; END
  
  NOP
 
- CMP
+ MOV AX,F2D ; Numero de UVT
+ CMP F2E ; Compara con 95
+ JME 0A9; SI es menor de 95
+ JEQ 0AE; SI es 95 (Preguntar por flag)
+ 
+ CMP F2F ; Compara con 150
+ JME 0B1; Si es menor de 150
+ JEQ 0B8; SI es 150 (Preguntar por flag)
+ 
+ CMP F30 ; Compara con 360
+ JME 0BB; Si es menor de 360
+ JEQ 0C3; SI es 360 (Preguntar por flag)
+ JMA 0C6; Si es mayor de 360
+ 
+ ; Operaciones
+ ; Si es menor de 95
+ 
+ MOV AX,EE0   ; Carga 0
+ ITOF      ; De 16bits a 32bits
+ STF F39   ; Guarda el 0 en el impuesto
+ MOV AX,F2D ; Numero de UVT
+ JMP 0A2; Salta a 150
+ 
+ ; Si es igual de 95
+ MOV AX,EE0   ; Carga 0
+ CMP F2C; Compara flag con 0
+ JEQ 0A9; ir a menor de 95
+ 
+ ; Si es menor de 150
+ MOV AX,F2D ; Numero de UVT
+ SUBF F2E ; Se resta 95 UVT
+ MULF F31; Multiplicar por 19%
+ MULF F2A; Multiplicar por valor UVT
+ STF F39 ; Guardar impuesto
+ MOV AX,F2D ; Numero de UVT
+ JMP 0A5; Saltar a 360
+ 
+ ; Si es igual a 150
+ MOV AX,EE0   ; Carga 0
+ CMP F2C   ; Compara Flag con 0
+ JEQ 0B1; Ir a menor de 150
+ 
+ ; Si es menor de 360
+ MOV AX,F2D ; Numero de UVT [360]
+ SUBF F2F ; Se resta 150 UVT
+ MULF F33; Multiplicar por 28%
+ ADDF F37 ; Sumar 10
+ MULF F2A; Multiplicar por valor UVT
+ STF F39 ; Guardar impuesto
+ MOV AX,F2D ; Numero de UVT
+ JMP 0CE; Saltar a end
+ 
+ ; Si es igual a 360
+ LDB EE0
+ CMP F2C
+ JEQ 0BB; saltar a menor de 360
+ 
+ ; SI es mayor de 360
+ MOV AX,F2D ; Numero de UVT
+ SUBF F30 ; Se resta 360 UVT
+ MULF F35; Multiplicar por 33%
+ ADDF F38 ; Sumar 69
+ MULF F2A; Multiplicar por valor UVT
+ STF F39 ; Guardar impuesto
+ MOV AX,F2D ; Numero de UVT
 
+ NOP ; END
+ 
+ ; Restar impuesto
+ LDF EE9 ; Cargar el sueldo
+ SUBF F39 ; Restar el impuesto
+ STF EE9 ; Guardar el nuevo sueldo
+ 
+ 
 
  MSG Valor a pagar:
- LDF EE7        ; Cargar total pago a empleado del grupo
+ LDF EE9        ; Cargar total pago a empleado del grupo
  OUT 1,AX       ; Escribir total pago a empleado del grupo
  NOP
  
@@ -368,11 +440,11 @@
  0011110110100011
  1101011100001000
  
- #F26
+#F26
  0011111010000000
  0000000000000000
  
- #F2A
+#F2A
  0100011011011100
  1110111000000000
  
