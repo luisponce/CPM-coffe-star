@@ -66,6 +66,35 @@
  ; F1B = 18 CONST
  ; F1C = 19 CONST
  ; F1D = Fondo de solidaridad de un empleado
+ ; F1F = Reservado
+ ; F20 = Total pago sueldo empleados
+ ; F21 = Reservado
+ ; F22 = Impuesto Laboral Gravado (ILG)
+ ; F23 = Reservado
+ ; F24 = Base Gravable
+ ; F25 = Reservado
+ ; F26 = 0.25 CONST
+ ; F27 = Reservado
+ ; F28 = 25% de ILG
+ ; F29 = Reservado
+ ; F2A = valor UVT CONST
+ ; F2B = Reservado
+ ; F2C = Flag rangos UVT
+ ; F2D = Numero de UVT
+ ; F2E = 95 CONST
+ ; F2F = 150 CONST
+ ; F30 = 360 CONST
+ ; F31 = 0.19 CONST
+ ; F32 = Reservado
+ ; F33 = 0.28 CONST
+ ; F34 = Reservado
+ ; F35 = 0.33 CONST
+ ; F36 = Reservado
+ ; F37 = 10 CONST
+ ; F38 = 69 CONST
+ ; F39 = Impuesto
+ ; F3A = Reservado
+ 
  
  
  
@@ -111,7 +140,7 @@
  MOV EF1,CX     ; Pasa el decimal a un temporal
  FTOI           ; Pasa de flotante de 32bits a Entero de 16bits
  MOV EED,AX     ; Guarda lo que esta en AX en Numero salarios minimos en 16bits
- MOV AX,EF1
+ MOV AX,EF1      ; Carga temporal
  CMP EE0         ; comparar si el reciduo de la div es cero
  JEQ 024         ; SI es cero salte a ENTONCES
  MOV AX,EE1      ; SINO carga 1 en AX
@@ -191,65 +220,102 @@
  ; Aportes al fondo de solidaridad
  LDF EED          ; Cargar numero de SMLMV
  CMP F17          ; Compara con 4
- JME ;FIN SI
+ JME 083          ; Salta a END
  CMP F16          ; Compara con 3
- JMA ;ir a 1%
+ JMA 065          ;ir a 1%
  CMP F18          ; Compara con 15
- JMA ; ir a 1.2%
+ JMA 06A          ; ir a 1.2%
  CMP F19          ; Compara con 16
- JMA ; ir a 1.4%
+ JMA 06F          ; ir a 1.4%
  CMP F1A          ; Compara con 17
- JMA ; ir a 1.6%
+ JMA 074          ; ir a 1.6%
  CMP F1B          ; Compara con 18
- JMA ; ir a 1.8%
+ JMA 079          ; ir a 1.8%
  CMP F1C          ; Compara con 19
- JMA ; ir a 2%
+ JMA 07E          ; ir a 2%
 
  ; Asignar 1% fondo de solidaridad
  LDF EE5          ; Cargar salario basico
  MULF F0A         ; Multiplica por 1%
  STF F1D          ; Guarda aporte fondo de solidaridad
  LDF EED          ; Carga numero de SMLMV
- JMP              ; Salta a 1.2%
+ JMP 05B          ; Salta a 1.2% - Compara con 15
  
  ; Asignar 1.2% fondo de solidaridad
  LDF EE5          ; Cargar salario basico
  MULF F0C         ; Multiplica por 1.2%
  STF F1D          ; Guarda aporte fondo de solidaridad
  LDF EED          ; Carga numero de SMLMV
- JMP              ; Salta a 1.4%
+ JMP 05D          ; Salta a 1.4% - Compara con 16
  
  ; Asignar 1.4% fondo de solidaridad
  LDF EE5          ; Cargar salario basico
  MULF F0E         ; Multiplica por 1.4%
  STF F1D          ; Guarda aporte fondo de solidaridad
  LDF EED          ; Carga numero de SMLMV
- JMP              ; Salta a 1.6%
+ JMP 05F          ; Salta a 1.6% - Compara con 17
  
  ; Asignar 1.6% fondo de solidaridad
  LDF EE5          ; Cargar salario basico
  MULF F10         ; Multiplica por 1.6%
  STF F1D          ; Guarda aporte fondo de solidaridad
  LDF EED          ; Carga numero de SMLMV
- JMP              ; Salta a 1.8%
+ JMP 061          ; Salta a 1.8% - Compara con 18
  
  ; Asignar 1.8% fondo de solidaridad
  LDF EE5          ; Cargar salario basico
  MULF F12         ; Multiplica por 1.8%
  STF F1D          ; Guarda aporte fondo de solidaridad
  LDF EED          ; Carga numero de SMLMV
- JMP              ; Salta a 2%
+ JMP 063              ; Salta a 2% - Compara con 19
  
  ; Asignar 2% fondo de solidaridad
  LDF EE5          ; Cargar salario basico
  MULF F14         ; Multiplica por 2%
  STF F1D          ; Guarda aporte fondo de solidaridad
  LDF EED          ; Carga numero de SMLMV
- JMP              ; Salta a END
+ JMP 083          ; Salta a END
 
- ; END
+ NOP              ; END
  
+ ; ILG
+ LDF EE5          ; Carga sueldo basico
+ SUBF EF2         ; Resta al sueldo basico los aportes a la salud
+ SUBF F02         ; Resta los aportes a la pension
+ SUBF F1D         ; Resta aportes de solidaridad
+ STF F22          ; Guarda ILG en memoria
  
+ ; Base Gravable
+ LDF F22          ; Carga ILG
+ MULF F26         ; Multiplica por 0.25 (25% de ILG)
+ STF F28          ; Guarda 25% de ILG en memoria
+ 
+ LDF F22          ; Carga ILG
+ SUBF F28         ; Resta 25%
+ STF F24          ; Guarda Base Gravable en memoria
+ 
+ ; UVT
+ LDF F24          ; Carga Base Gravable
+ DIVF F2A         ; Divide por UVT
+ MOV EF1,CX       ; Guarda los decimales en un temporal
+ FTOI             ; Pasa a entero
+ MOV F2A,AX       ; Guarda el numero de UVT en memoria
+ MOV AX,EF1       ; Carga temporal
+ CMP EE0          ; comparar si el reciduo de la div es cero
+ JEQ 09A          ; Si es cero, ir a poner cero en flag
+ MOV AX,EE1       ; Carga 1
+ MOV F2C,AX       ; Pone Flag de UVT en 1
+ JMP 09D          ; END
+ 
+ ; Poner cero en flag
+ MOV AX,EE0       ; Carga 0
+ MOV F2C, AX      ; Pone Flag de UVT en 0
+ JMP 09D          ; END
+ 
+ NOP
+
+ CMP
+
 
  MSG Valor a pagar:
  LDF EE7        ; Cargar total pago a empleado del grupo
@@ -301,3 +367,24 @@
  0101000111100000
  0011110110100011
  1101011100001000
+ 
+ #F26
+ 0011111010000000
+ 0000000000000000
+ 
+ #F2A
+ 0100011011011100
+ 1110111000000000
+ 
+#F2E
+ 0000000001011111
+ 0000000010010110
+ 0000000101101000
+ 0011111001000010
+ 1000111101011100
+ 0011111010001111
+ 0101110000101000
+ 0011111010101000
+ 1111010111000010
+ 0000000000001010
+ 0000000001000101
