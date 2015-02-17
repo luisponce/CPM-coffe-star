@@ -11,8 +11,8 @@
  ; EE4 =
  ; EE5 = Sueldo basico empleados (32 bits)
  ; EE6 = Reservado
- ; EE7 = Total pago a empleado de grupo (32 bits)
- ; EE8 = Reservado
+ ; EE7 =
+ ; EE8 =
  ; EE9 = Sueldo (32 bits)
  ; EEA = Reservado
  ; EEB = SMLMV (32 bits)
@@ -24,12 +24,12 @@
  ; EF1 = Temporal
  ; EF2 = Aportes de salud empleado
  ; EF3 = Reservado
- ; EF4 = Total Aportes salud empleados
- ; EF5 = Reservado
+ ; EF4 =
+ ; EF5 =
  ; EF6 = Aportes salud empresa
  ; EF7 = Reservado
- ; EF8 = Total Aportes salud empresa
- ; EF9 = Reservado
+ ; EF8 =
+ ; EF9 =
  ; EFA = 0.04  CONST
  ; EFB = Reservado
  ; EFC = 0.045 CONST
@@ -40,12 +40,12 @@
  ; F01 = Reservado
  ; F02 = Aportes a pensiones empleado
  ; F03 = Reservado
- ; F04 = Total aportes a pensiones empleados
- ; F05 = Reservado
+ ; F04 =
+ ; F05 =
  ; F06 = Aportes a pension empresa
  ; F07 = Reservado
- ; F08 = Total aportes a pensiones empresa
- ; F09 = Reservado
+ ; F08 =
+ ; F09 =
  ; F0A = 0.01 CONST
  ; F0B = Reservado
  ; F0C = 0.012 CONST
@@ -67,8 +67,8 @@
  ; F1C = 19 CONST
  ; F1D = Fondo de solidaridad de un empleado
  ; F1E = Reservado
- ; F20 = Total pago sueldo empleados
- ; F21 = Reservado
+ ; F20 =
+ ; F21 =
  ; F22 = Impuesto Laboral Gravado (ILG)
  ; F23 = Reservado
  ; F24 = Base Gravable
@@ -98,6 +98,20 @@
  ; F3C = Reservado
  ; F3D = 10 CONST
  ; F3E = Reservado
+ ; F3F = Total sueldo
+ ; F40 = Reservado
+ ; F41 = Total salud empleados
+ ; F42 = Reservado
+ ; F43 = Total salud empresa
+ ; F44 = Reservado
+ ; F45 = Total pension empleados
+ ; F46 = Reservado
+ ; F47 = Total pension empresa
+ ; F48 = Reservado
+ ; F49 = Total fondo de solidaridad
+ ; F4A = Reservado
+ ; F4B = Total impuestos
+ ; F4C = Reservado
  
  
  
@@ -182,10 +196,10 @@
  SUBF EF2        ; Resta al sueldo actual el Aporte de la salud
  STF EE9         ; Actualiza el sueldo actual
  
- LDF F00         ; Carga el numero de empleados en AX-BX
- MULF EF2        ; multiplica lo que paga un empleado de salud por la cantidad de empleados
- ADDF EF4        ; Suma al total de salud de empleados del grupo con el total acumulado
- STF EF4         ; guarda el total de salud de empleados en memoria
+ NOP
+ NOP
+ NOP
+ NOP
  
  ; Aportes salud empresa
  LDF EFC         ; carga 0.045
@@ -397,18 +411,49 @@
  
  ; TOTALES
  ; Total pago grupo
+ LDF F00         ; Carga el numero de empleados en AX-BX
+ MULF EE9        ; multiplica el sueldo de un empleado por la cantidad de empleados
+ ADDF F3F        ; Suma al total de sueldo de empleados con el total acumulado
+ STF F3F         ; guarda el total de sueldo en memoria
+ 
  ; Total Aportes a Salud Empleados
+ LDF F00         ; Carga el numero de empleados en AX-BX
+ MULF EF2        ; multiplica lo que paga un empleado de salud por la cantidad de empleados
+ ADDF F41        ; Suma al total de salud de empleados del grupo con el total acumulado
+ STF F41         ; guarda el total de salud de empleados en memoria
+ 
  ; Total Aportes a Pension Empleados
+ LDF F00         ; Carga el numero de empleados en AX-BX
+ MULF EF2        ; multiplica lo que paga un empleado de pension por la cantidad de empleados
+ ADDF F43        ; Suma al total de pension de empleados con el total acumulado
+ STF F43         ; guarda el total de pension de empleados en memoria
+
  ; Total Aportes a Fondo de Solidaridad
+ LDF F00         ; Carga el numero de empleados en AX-BX
+ MULF EF2        ; multiplica lo que paga un empleado de solidaridad por la cantidad de empleados
+ ADDF F45        ; Suma al total de solidaridad de empleados con el total acumulado
+ STF F45         ; guarda el total de solidaridad de empleados en memoria
+
  ; Total Aportes a Salud Empresa
+ LDF F00         ; Carga el numero de empleados en AX-BX
+ MULF EF2        ; multiplica lo que paga la empresa de salud por la cantidad de empleados
+ ADDF F47        ; Suma el total de salud de empresa con el total acumulado
+ STF F47         ; guarda el total de salud de empresa en memoria
+ 
  ; Total Aportes a Pension Empresa
+ LDF F00         ; Carga el numero de empleados en AX-BX
+ MULF EF2        ; multiplica lo que paga la empresa de pension por la cantidad de empleados
+ ADDF F49        ; Suma el total de pension de empresa con el total acumulado
+ STF F49         ; guarda el total de pension de empresa en memoria
+ 
  ; Total Impuestos
+ LDF F00         ; Carga el numero de empleados en AX-BX
+ MULF EF2        ; multiplica lo que paga un empleado de impuestos por la cantidad de empleados
+ ADDF F4B        ; Suma al total de impuestos de empleados con el total acumulado
+ STF F4B         ; guarda el total de impuestos de empleados en memoria
 
  
- 
-
- 
-
+; Salida
  MSG Valor a pagar:
  LDF EE9        ; Cargar total pago a empleado del grupo
  OUT 1,AX       ; Escribir total pago a empleado del grupo
@@ -508,4 +553,20 @@
  0100001010001010
  0000000000000000
  0100000100100000
+ 0000000000000000
+ 
+#F3F
+ 0000000000000000
+ 0000000000000000
+ 0000000000000000
+ 0000000000000000
+ 0000000000000000
+ 0000000000000000
+ 0000000000000000
+ 0000000000000000
+ 0000000000000000
+ 0000000000000000
+ 0000000000000000
+ 0000000000000000
+ 0000000000000000
  0000000000000000
