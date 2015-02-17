@@ -66,7 +66,7 @@
  ; F1B = 18 CONST
  ; F1C = 19 CONST
  ; F1D = Fondo de solidaridad de un empleado
- ; F1F = Reservado
+ ; F1E = Reservado
  ; F20 = Total pago sueldo empleados
  ; F21 = Reservado
  ; F22 = Impuesto Laboral Gravado (ILG)
@@ -218,9 +218,9 @@
  STF F08          ; guardar el total de pensiones de empresa en memoria
  
  ; Aportes al fondo de solidaridad
- LDF EED          ; Cargar numero de SMLMV
+ MOV AX,EED          ; Cargar numero de SMLMV
  CMP F17          ; Compara con 4
- JME 083          ; Salta a END
+ JME 084          ; Salta a END
  CMP F16          ; Compara con 3
  JMA 065          ;ir a 1%
  CMP F18          ; Compara con 15
@@ -233,6 +233,8 @@
  JMA 079          ; ir a 1.8%
  CMP F1C          ; Compara con 19
  JMA 07E          ; ir a 2%
+ JMP 084          ; ir a END
+ 
 
  ; Asignar 1% fondo de solidaridad
  LDF EE5          ; Cargar salario basico
@@ -274,9 +276,9 @@
  MULF F14         ; Multiplica por 2%
  STF F1D          ; Guarda aporte fondo de solidaridad
  LDF EED          ; Carga numero de SMLMV
- JMP 083          ; Salta a END
+ JMP 084          ; Salta a END
 
- NOP              ; END
+              ; END
  
  ; ILG
  LDF EE5          ; Carga sueldo basico
@@ -329,13 +331,13 @@
  JMA 0C6; Si es mayor de 360
  
  ; Operaciones
- ; Si es menor de 95
  
+ ; Si es menor de 95
  MOV AX,EE0   ; Carga 0
  ITOF      ; De 16bits a 32bits
  STF F39   ; Guarda el 0 en el impuesto
  MOV AX,F2D ; Numero de UVT
- JMP 0A2; Salta a 150
+ JMP 0CD;Ir a END
  
  ; Si es igual de 95
  MOV AX,EE0   ; Carga 0
@@ -349,7 +351,7 @@
  MULF F2A; Multiplicar por valor UVT
  STF F39 ; Guardar impuesto
  MOV AX,F2D ; Numero de UVT
- JMP 0A5; Saltar a 360
+ JMP 0CD; Saltar a END
  
  ; Si es igual a 150
  MOV AX,EE0   ; Carga 0
@@ -439,6 +441,31 @@
  0101000111100000
  0011110110100011
  1101011100001000
+ 
+#F0A
+ 0011110000100011
+ 1101011100000000
+ 0011110001000100
+ 1001101110000000
+ 0011110001100101
+ 0110000001000000
+ 0011110010000011
+ 0001001001100000
+ 0011110010010011
+ 0111010010100000
+ 0011110010100011
+ 1101011100000000
+ 
+ 
+#F16
+ 0000000000000011
+ 0000000000000100
+ 0000000000001111
+ 0000000000010000
+ 0000000000010001
+ 0000000000010010
+ 0000000000010011
+ 
  
 #F26
  0011111010000000
