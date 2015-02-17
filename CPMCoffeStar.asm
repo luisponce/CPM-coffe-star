@@ -175,7 +175,7 @@
  STF EF2         ; guarda el Aportes de la salud del empleado en memoria
  
  LDF EE9         ; Carga el sueldo actual en AX-BX
- SUBF EF2        ; Resta al sueldo actual el Aportes de la salud
+ SUBF EF2        ; Resta al sueldo actual el Aporte de la salud
  STF EE9         ; Actualiza el sueldo actual
  
  LDF F00         ; Carga el numero de empleados en AX-BX
@@ -218,21 +218,21 @@
  STF F08          ; guardar el total de pensiones de empresa en memoria
  
  ; Aportes al fondo de solidaridad
- MOV AX,EED          ; Cargar numero de SMLMV
+ MOV AX,EED       ; Cargar numero de SMLMV
  CMP F17          ; Compara con 4
- JME 084          ; Salta a END
+ JME 084          ; Si es menor que 4 Salta a END
  CMP F16          ; Compara con 3
- JMA 065          ;ir a 1%
+ JMA 066          ; Si es mayor que 3 ir a 1%
  CMP F18          ; Compara con 15
- JMA 06A          ; ir a 1.2%
+ JMA 06C          ; Si es mayor que 15 ir a 1.2%
  CMP F19          ; Compara con 16
- JMA 06F          ; ir a 1.4%
+ JMA 070          ; Si es mayor que 16 ir a 1.4%
  CMP F1A          ; Compara con 17
- JMA 074          ; ir a 1.6%
+ JMA 075          ; Si es mayor que 17 ir a 1.6%
  CMP F1B          ; Compara con 18
- JMA 079          ; ir a 1.8%
+ JMA 07A          ; Si es mayor que 18 ir a 1.8%
  CMP F1C          ; Compara con 19
- JMA 07E          ; ir a 2%
+ JMA 07F          ; Si es mayor que 19 ir a 2%
  JMP 084          ; ir a END
  
 
@@ -240,48 +240,51 @@
  LDF EE5          ; Cargar salario basico
  MULF F0A         ; Multiplica por 1%
  STF F1D          ; Guarda aporte fondo de solidaridad
- LDF EED          ; Carga numero de SMLMV
+ MOV AX,EED          ; Carga numero de SMLMV
  JMP 05B          ; Salta a 1.2% - Compara con 15
  
  ; Asignar 1.2% fondo de solidaridad
  LDF EE5          ; Cargar salario basico
  MULF F0C         ; Multiplica por 1.2%
  STF F1D          ; Guarda aporte fondo de solidaridad
- LDF EED          ; Carga numero de SMLMV
+ MOV AX,EED          ; Carga numero de SMLMV
  JMP 05D          ; Salta a 1.4% - Compara con 16
  
  ; Asignar 1.4% fondo de solidaridad
  LDF EE5          ; Cargar salario basico
  MULF F0E         ; Multiplica por 1.4%
  STF F1D          ; Guarda aporte fondo de solidaridad
- LDF EED          ; Carga numero de SMLMV
+ MOV AX,EED          ; Carga numero de SMLMV
  JMP 05F          ; Salta a 1.6% - Compara con 17
  
  ; Asignar 1.6% fondo de solidaridad
  LDF EE5          ; Cargar salario basico
  MULF F10         ; Multiplica por 1.6%
  STF F1D          ; Guarda aporte fondo de solidaridad
- LDF EED          ; Carga numero de SMLMV
+ MOV AX,EED          ; Carga numero de SMLMV
  JMP 061          ; Salta a 1.8% - Compara con 18
  
  ; Asignar 1.8% fondo de solidaridad
  LDF EE5          ; Cargar salario basico
  MULF F12         ; Multiplica por 1.8%
  STF F1D          ; Guarda aporte fondo de solidaridad
- LDF EED          ; Carga numero de SMLMV
- JMP 063              ; Salta a 2% - Compara con 19
+ MOV AX,EED          ; Carga numero de SMLMV
+ JMP 063          ; Salta a 2% - Compara con 19
  
  ; Asignar 2% fondo de solidaridad
  LDF EE5          ; Cargar salario basico
  MULF F14         ; Multiplica por 2%
  STF F1D          ; Guarda aporte fondo de solidaridad
- LDF EED          ; Carga numero de SMLMV
+ MOV AX,EED          ; Carga numero de SMLMV
  JMP 084          ; Salta a END
-
-              ; END
  
+ ; Restar aporte fondo de solidaridad
+ LDF EE9          ; Carga sueldo
+ SUBF F1D         ; Resta aporte fondo de solidaridad
+ STF EE9          ; Guarda nuevo sueldo
+
  ; ILG
- LDF EE5          ; Carga sueldo basico
+ LDF EE5          ; Carga sueldo basico -- END
  SUBF EF2         ; Resta al sueldo basico los aportes a la salud
  SUBF F02         ; Resta los aportes a la pension
  SUBF F1D         ; Resta aportes de solidaridad
@@ -304,7 +307,7 @@
  MOV F2D,AX       ; Guarda el numero de UVT en memoria
  MOV AX,EF1       ; Carga temporal
  CMP EE0          ; comparar si el reciduo de la div es cero
- JEQ 09A          ; Si es cero, ir a poner cero en flag
+ JEQ 09D          ; Si es cero, ir a poner cero en flag
  MOV AX,EE1       ; Carga 1
  MOV F2C,AX       ; Pone Flag de UVT en 1
  JMP 09D          ; END
@@ -312,23 +315,23 @@
  ; Poner cero en flag
  MOV AX,EE0       ; Carga 0
  MOV F2C,AX      ; Pone Flag de UVT en 0
- JMP 09D          ; END
+ JMP 0A1          ; END
  
  NOP
 
  MOV AX,F2D ; Numero de UVT
  CMP F2E ; Compara con 95
- JME 0A9; SI es menor de 95
- JEQ 0AE; SI es 95 (Preguntar por flag)
+ JME 0AC; SI es menor de 95
+ JEQ 0B1; SI es 95 (Preguntar por flag)
  
  CMP F2F ; Compara con 150
- JME 0B1; Si es menor de 150
- JEQ 0B8; SI es 150 (Preguntar por flag)
+ JME 0B4; Si es menor de 150
+ JEQ 0BB; SI es 150 (Preguntar por flag)
  
  CMP F30 ; Compara con 360
- JME 0BB; Si es menor de 360
- JEQ 0C3; SI es 360 (Preguntar por flag)
- JMA 0C6; Si es mayor de 360
+ JME 0BE; Si es menor de 360
+ JEQ 0C6; SI es 360 (Preguntar por flag)
+ JMA 0C9; Si es mayor de 360
  
  ; Operaciones
  
@@ -337,12 +340,12 @@
  ITOF      ; De 16bits a 32bits
  STF F39   ; Guarda el 0 en el impuesto
  MOV AX,F2D ; Numero de UVT
- JMP 0CD;Ir a END
+ JMP 0D0;Ir a END
  
  ; Si es igual de 95
  MOV AX,EE0   ; Carga 0
  CMP F2C; Compara flag con 0
- JEQ 0A9; ir a menor de 95
+ JEQ 0AC; ir a menor de 95
  
  ; Si es menor de 150
  MOV AX,F2D ; Numero de UVT
@@ -351,12 +354,12 @@
  MULF F2A; Multiplicar por valor UVT
  STF F39 ; Guardar impuesto
  MOV AX,F2D ; Numero de UVT
- JMP 0CD; Saltar a END
+ JMP 0D0; Saltar a END
  
  ; Si es igual a 150
  MOV AX,EE0   ; Carga 0
  CMP F2C   ; Compara Flag con 0
- JEQ 0B1; Ir a menor de 150
+ JEQ 0B4; Ir a menor de 150
  
  ; Si es menor de 360
  MOV AX,F2D ; Numero de UVT [360]
@@ -366,12 +369,12 @@
  MULF F2A; Multiplicar por valor UVT
  STF F39 ; Guardar impuesto
  MOV AX,F2D ; Numero de UVT
- JMP 0CE; Saltar a end
+ JMP 0D0; Saltar a end
  
  ; Si es igual a 360
  LDB EE0
  CMP F2C
- JEQ 0BB; saltar a menor de 360
+ JEQ 0BE; saltar a menor de 360
  
  ; SI es mayor de 360
  MOV AX,F2D ; Numero de UVT
