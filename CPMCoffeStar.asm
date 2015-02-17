@@ -90,10 +90,14 @@
  ; F34 = Reservado
  ; F35 = 0.33 CONST
  ; F36 = Reservado
- ; F37 = 10 CONST
- ; F38 = 69 CONST
+ ; F37 =
+ ; F38 =
  ; F39 = Impuesto
  ; F3A = Reservado
+ ; F3B = 69 CONST
+ ; F3C = Reservado
+ ; F3D = 10 CONST
+ ; F3E = Reservado
  
  
  
@@ -235,7 +239,6 @@
  JMA 07F          ; Si es mayor que 19 ir a 2%
  JMP 084          ; ir a END
  
-
  ; Asignar 1% fondo de solidaridad
  LDF EE5          ; Cargar salario basico
  MULF F0A         ; Multiplica por 1%
@@ -314,84 +317,96 @@
  
  ; Poner cero en flag
  MOV AX,EE0       ; Carga 0
- MOV F2C,AX      ; Pone Flag de UVT en 0
+ MOV F2C,AX       ; Pone Flag de UVT en 0
  JMP 0A1          ; END
  
  NOP
-
- MOV AX,F2D ; Numero de UVT
- CMP F2E ; Compara con 95
- JME 0AC; SI es menor de 95
- JEQ 0B1; SI es 95 (Preguntar por flag)
  
- CMP F2F ; Compara con 150
- JME 0B4; Si es menor de 150
- JEQ 0BB; SI es 150 (Preguntar por flag)
+ ; Impuesto
+ MOV AX,F2D       ; Numero de UVT
+ CMP F2E          ; Compara con 95
+ JME 0AC          ; SI es menor de 95
+ JEQ 0B1          ; SI es 95 (Preguntar por flag)
  
- CMP F30 ; Compara con 360
- JME 0BE; Si es menor de 360
- JEQ 0C6; SI es 360 (Preguntar por flag)
- JMA 0C9; Si es mayor de 360
+ CMP F2F          ; Compara con 150
+ JME 0B4          ; Si es menor de 150
+ JEQ 0BB          ; SI es 150 (Preguntar por flag)
+ 
+ CMP F30          ; Compara con 360
+ JME 0BE          ; Si es menor de 360
+ JEQ 0C6          ; SI es 360 (Preguntar por flag)
+ JMA 0C9          ; Si es mayor de 360
  
  ; Operaciones
- 
  ; Si es menor de 95
- MOV AX,EE0   ; Carga 0
- ITOF      ; De 16bits a 32bits
- STF F39   ; Guarda el 0 en el impuesto
- MOV AX,F2D ; Numero de UVT
- JMP 0D0;Ir a END
+ MOV AX,EE0       ; Carga 0
+ ITOF             ; De 16bits a 32bits
+ STF F39          ; Guarda el 0 en el impuesto
+ MOV AX,F2D       ; Carga numero de UVT
+ JMP 0D0          ; Ir a END
  
  ; Si es igual de 95
- MOV AX,EE0   ; Carga 0
- CMP F2C; Compara flag con 0
- JEQ 0AC; ir a menor de 95
+ MOV AX,EE0       ; Carga 0
+ CMP F2C          ; Compara flag con 0
+ JEQ 0AC          ; ir a menor de 95
  
  ; Si es menor de 150
- MOV AX,F2D ; Numero de UVT
- SUBF F2E ; Se resta 95 UVT
- MULF F31; Multiplicar por 19%
- MULF F2A; Multiplicar por valor UVT
- STF F39 ; Guardar impuesto
- MOV AX,F2D ; Numero de UVT
- JMP 0D0; Saltar a END
+ MOV AX,F2D       ; Numero de UVT
+ SUB F2E          ; Se resta 95 UVT
+ ITOF             ; De 16bits a 32bits
+ MULF F31         ; Multiplicar por 19%
+ MULF F2A         ; Multiplicar por valor UVT
+ STF F39          ; Guardar impuesto
+ JMP 0D0          ; Saltar a END
  
  ; Si es igual a 150
- MOV AX,EE0   ; Carga 0
- CMP F2C   ; Compara Flag con 0
- JEQ 0B4; Ir a menor de 150
+ MOV AX,EE0       ; Carga 0
+ CMP F2C          ; Compara Flag con 0
+ JEQ 0B4          ; Ir a menor de 150
  
  ; Si es menor de 360
- MOV AX,F2D ; Numero de UVT [360]
- SUBF F2F ; Se resta 150 UVT
- MULF F33; Multiplicar por 28%
- ADDF F37 ; Sumar 10
- MULF F2A; Multiplicar por valor UVT
- STF F39 ; Guardar impuesto
- MOV AX,F2D ; Numero de UVT
- JMP 0D0; Saltar a end
+ MOV AX,F2D       ; Numero de UVT
+ SUB F2F          ; Se resta 150 UVT
+ ITOF             ; De 16bits a 32bits
+ MULF F33         ; Multiplicar por 28%
+ ADDF F3D         ; Sumar 10
+ MULF F2A         ; Multiplicar por valor UVT
+ STF F39          ; Guardar impuesto
+ JMP 0D0          ; Saltar a end
  
  ; Si es igual a 360
- LDB EE0
- CMP F2C
- JEQ 0BE; saltar a menor de 360
+ LDB EE0          ; Carga 0
+ CMP F2C          ; Compara Flag con 0
+ JEQ 0BE          ; saltar a menor de 360
  
- ; SI es mayor de 360
- MOV AX,F2D ; Numero de UVT
- SUBF F30 ; Se resta 360 UVT
- MULF F35; Multiplicar por 33%
- ADDF F38 ; Sumar 69
- MULF F2A; Multiplicar por valor UVT
- STF F39 ; Guardar impuesto
- MOV AX,F2D ; Numero de UVT
+ ; Si es mayor de 360
+ MOV AX,F2D       ; carga Numero de UVT
+ SUB F30          ; Se resta 360 UVT
+ ITOF             ; De 16bits a 32bits
+ MULF F35         ; Multiplicar por 33%
+ ADDF F3B         ; Sumar 69
+ MULF F2A         ; Multiplicar por valor UVT
+ STF F39          ; Guardar impuesto
 
  NOP ; END
  
  ; Restar impuesto
- LDF EE9 ; Cargar el sueldo
- SUBF F39 ; Restar el impuesto
- STF EE9 ; Guardar el nuevo sueldo
+ LDF EE9          ; Cargar el sueldo
+ SUBF F39         ; Restar el impuesto
+ STF EE9          ; Guardar el nuevo sueldo
  
+ ; TOTALES
+ ; Total pago grupo
+ ; Total Aportes a Salud Empleados
+ ; Total Aportes a Pension Empleados
+ ; Total Aportes a Fondo de Solidaridad
+ ; Total Aportes a Salud Empresa
+ ; Total Aportes a Pension Empresa
+ ; Total Impuestos
+
+ 
+ 
+
  
 
  MSG Valor a pagar:
@@ -488,5 +503,9 @@
  0101110000101000
  0011111010101000
  1111010111000010
- 0000000000001010
- 0000000001000101
+
+#F3B
+ 0100001010001010
+ 0000000000000000
+ 0100000100100000
+ 0000000000000000
