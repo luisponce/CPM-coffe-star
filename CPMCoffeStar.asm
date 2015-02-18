@@ -130,7 +130,7 @@
  CMP EE1        ; Compara AX con 1
  JEQ 010        ; Si son iguales salta a ingresar nomina
  CMP EE2        ; Compara AX con 2
- JEQ 02B        ; Si son iguales salta a totales
+ JEQ 0FF        ; Si son iguales salta a totales
  CMP EE3        ; Compara AX con 3
  JEQ 00F        ; Si son iguales salta a terminar programa
  MSG Ingrese una opcion valida
@@ -424,31 +424,31 @@
  
  ; Total Aportes a Pension Empleados
  LDF F00         ; Carga el numero de empleados en AX-BX
- MULF EF2        ; multiplica lo que paga un empleado de pension por la cantidad de empleados
+ MULF F02        ; multiplica lo que paga un empleado de pension por la cantidad de empleados
  ADDF F43        ; Suma al total de pension de empleados con el total acumulado
  STF F43         ; guarda el total de pension de empleados en memoria
 
  ; Total Aportes a Fondo de Solidaridad
  LDF F00         ; Carga el numero de empleados en AX-BX
- MULF EF2        ; multiplica lo que paga un empleado de solidaridad por la cantidad de empleados
+ MULF F1D        ; multiplica lo que paga un empleado de solidaridad por la cantidad de empleados
  ADDF F45        ; Suma al total de solidaridad de empleados con el total acumulado
  STF F45         ; guarda el total de solidaridad de empleados en memoria
 
  ; Total Aportes a Salud Empresa
  LDF F00         ; Carga el numero de empleados en AX-BX
- MULF EF2        ; multiplica lo que paga la empresa de salud por la cantidad de empleados
+ MULF EF6        ; multiplica lo que paga la empresa de salud por la cantidad de empleados
  ADDF F47        ; Suma el total de salud de empresa con el total acumulado
  STF F47         ; guarda el total de salud de empresa en memoria
  
  ; Total Aportes a Pension Empresa
  LDF F00         ; Carga el numero de empleados en AX-BX
- MULF EF2        ; multiplica lo que paga la empresa de pension por la cantidad de empleados
+ MULF F06        ; multiplica lo que paga la empresa de pension por la cantidad de empleados
  ADDF F49        ; Suma el total de pension de empresa con el total acumulado
  STF F49         ; guarda el total de pension de empresa en memoria
  
  ; Total Impuestos
  LDF F00         ; Carga el numero de empleados en AX-BX
- MULF EF2        ; multiplica lo que paga un empleado de impuestos por la cantidad de empleados
+ MULF F39        ; multiplica lo que paga un empleado de impuestos por la cantidad de empleados
  ADDF F4B        ; Suma al total de impuestos de empleados con el total acumulado
  STF F4B         ; guarda el total de impuestos de empleados en memoria
 
@@ -473,8 +473,33 @@
  JMP 03B        ; Si no ingresa una opcion valida
 
  MSG Totales
- MOV AX,EED
- EAP
+ MSG ------------------------------------------
+ MSG Totales de los empleados:
+ MSG 1. Sueldo a Pagar
+ LDF F3F
+ OUT 1,AX
+ MSG 2. Aportes a Salud
+ LDF F41
+ OUT 1,AX
+ MSG 3. Aportes a Pension
+ LDF F45
+ OUT 1,AX
+ MSG 4. Aportes Fondo solidaridad
+ LDF F49
+ OUT 1,AX
+ MSG -
+ MSG Totales de la empresa
+ MSG 1. Aportes a Salud
+ LDF F43
+ OUT 1,AX
+ MSG 2. Aportes a Pension
+ LDF F47
+ OUT 1,AX
+ MSG -
+ MSG Total DIAN (Ret. fuente)
+ LDF F4B
+ OUT 1,AX
+ LDT Ingrese cualquier valor para continuar
  JMP 002
 
  ; Constantes 0, 1, 2, 3
