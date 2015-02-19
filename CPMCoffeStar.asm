@@ -425,26 +425,26 @@
  ; Total Aportes a Pension Empleados
  LDF F00         ; Carga el numero de empleados en AX-BX
  MULF F02        ; multiplica lo que paga un empleado de pension por la cantidad de empleados
- ADDF F43        ; Suma al total de pension de empleados con el total acumulado
- STF F43         ; guarda el total de pension de empleados en memoria
+ ADDF F45        ; Suma al total de pension de empleados con el total acumulado
+ STF F45         ; guarda el total de pension de empleados en memoria
 
  ; Total Aportes a Fondo de Solidaridad
  LDF F00         ; Carga el numero de empleados en AX-BX
  MULF F1D        ; multiplica lo que paga un empleado de solidaridad por la cantidad de empleados
- ADDF F45        ; Suma al total de solidaridad de empleados con el total acumulado
- STF F45         ; guarda el total de solidaridad de empleados en memoria
+ ADDF F49        ; Suma al total de solidaridad de empleados con el total acumulado
+ STF F49         ; guarda el total de solidaridad de empleados en memoria
 
  ; Total Aportes a Salud Empresa
  LDF F00         ; Carga el numero de empleados en AX-BX
  MULF EF6        ; multiplica lo que paga la empresa de salud por la cantidad de empleados
- ADDF F47        ; Suma el total de salud de empresa con el total acumulado
- STF F47         ; guarda el total de salud de empresa en memoria
+ ADDF F43        ; Suma el total de salud de empresa con el total acumulado
+ STF F43         ; guarda el total de salud de empresa en memoria
  
  ; Total Aportes a Pension Empresa
  LDF F00         ; Carga el numero de empleados en AX-BX
  MULF F06        ; multiplica lo que paga la empresa de pension por la cantidad de empleados
- ADDF F49        ; Suma el total de pension de empresa con el total acumulado
- STF F49         ; guarda el total de pension de empresa en memoria
+ ADDF F47        ; Suma el total de pension de empresa con el total acumulado
+ STF F47         ; guarda el total de pension de empresa en memoria
  
  ; Total Impuestos
  LDF F00         ; Carga el numero de empleados en AX-BX
