@@ -81,17 +81,17 @@
  ; F2B = Reservado
  ; F2C = Flag rangos UVT
  ; F2D = Numero de UVT
- ; F2E = 95 CONST
- ; F2F = 150 CONST
- ; F30 = 360 CONST
+ ; F2E = 150 CONST
+ ; F2F = Reservado
+ ; F30 =
  ; F31 = 0.19 CONST
  ; F32 = Reservado
  ; F33 = 0.28 CONST
  ; F34 = Reservado
  ; F35 = 0.33 CONST
  ; F36 = Reservado
- ; F37 =
- ; F38 =
+ ; F37 = 95 CONST
+ ; F38 = Reservado
  ; F39 = Impuesto
  ; F3A = Reservado
  ; F3B = 69 CONST
@@ -112,6 +112,10 @@
  ; F4A = Reservado
  ; F4B = Total impuestos
  ; F4C = Reservado
+ ; F4D = UVTs en 32bits
+ ; F4E = Reservado
+ ; F4F = 360 CONST
+ ; F50 = Reservado
  
  
  
@@ -177,8 +181,8 @@
  JMP 034         ; FIN SI
  
  ; compar flag
- MOV AX,EE1      ; AX=0
- CMP EEE         ; compara el flag con 1 para saber si tiene decimales
+ MOV AX,EE0      ; AX=0
+ CMP EEE         ; compara el flag con 0 para saber si tiene decimales
  JEQ 031         ; SI tiene decimales ir a calcular subsidio
  JMP 034         ; Fin si
  
@@ -319,37 +323,38 @@
  ; UVT
  LDF F24          ; Carga Base Gravable
  DIVF F2A         ; Divide por UVT
+ STF F4D          ; Guarda numero de UVTs en 32bits
  MOV EF1,CX       ; Guarda los decimales en un temporal
  FTOI             ; Pasa a entero
  MOV F2D,AX       ; Guarda el numero de UVT en memoria
  MOV AX,EF1       ; Carga temporal
  CMP EE0          ; comparar si el reciduo de la div es cero
- JEQ 09D          ; Si es cero, ir a poner cero en flag
+ JEQ 09E          ; Si es cero, ir a poner cero en flag
  MOV AX,EE1       ; Carga 1
  MOV F2C,AX       ; Pone Flag de UVT en 1
- JMP 09D          ; END
+ JMP 09E          ; END
  
  ; Poner cero en flag
  MOV AX,EE0       ; Carga 0
  MOV F2C,AX       ; Pone Flag de UVT en 0
- JMP 0A1          ; END
+ JMP 0A2          ; END
  
  NOP
  
  ; Impuesto
  MOV AX,F2D       ; Numero de UVT
  CMP F2E          ; Compara con 95
- JME 0AC          ; SI es menor de 95
- JEQ 0B1          ; SI es 95 (Preguntar por flag)
+ JME 0AD          ; SI es menor de 95
+ JEQ 0B2          ; SI es 95 (Preguntar por flag)
  
  CMP F2F          ; Compara con 150
- JME 0B4          ; Si es menor de 150
- JEQ 0BB          ; SI es 150 (Preguntar por flag)
+ JME 0B5          ; Si es menor de 150
+ JEQ 0BC          ; SI es 150 (Preguntar por flag)
  
  CMP F30          ; Compara con 360
- JME 0BE          ; Si es menor de 360
- JEQ 0C6          ; SI es 360 (Preguntar por flag)
- JMA 0C9          ; Si es mayor de 360
+ JME 0BF          ; Si es menor de 360
+ JEQ 0C7          ; SI es 360 (Preguntar por flag)
+ JMA 0CA          ; Si es mayor de 360
  
  ; Operaciones
  ; Si es menor de 95
@@ -357,26 +362,26 @@
  ITOF             ; De 16bits a 32bits
  STF F39          ; Guarda el 0 en el impuesto
  MOV AX,F2D       ; Carga numero de UVT
- JMP 0D0          ; Ir a END
+ JMP 0D1          ; Ir a END
  
  ; Si es igual de 95
  MOV AX,EE0       ; Carga 0
  CMP F2C          ; Compara flag con 0
- JEQ 0AC          ; ir a menor de 95
+ JEQ 0AD          ; ir a menor de 95
  
  ; Si es menor de 150
- MOV AX,F2D       ; Numero de UVT
- SUB F2E          ; Se resta 95 UVT
- ITOF             ; De 16bits a 32bits
+ LDF F4D          ; Numero de UVT
+ SUBF F37         ; Se resta 95 UVT
+ NOP
  MULF F31         ; Multiplicar por 19%
  MULF F2A         ; Multiplicar por valor UVT
  STF F39          ; Guardar impuesto
- JMP 0D0          ; Saltar a END
+ JMP 0D1          ; Saltar a END
  
  ; Si es igual a 150
  MOV AX,EE0       ; Carga 0
  CMP F2C          ; Compara Flag con 0
- JEQ 0B4          ; Ir a menor de 150
+ JEQ 0B5          ; Ir a menor de 150
  
  ; Si es menor de 360
  MOV AX,F2D       ; Numero de UVT
@@ -386,12 +391,12 @@
  ADDF F3D         ; Sumar 10
  MULF F2A         ; Multiplicar por valor UVT
  STF F39          ; Guardar impuesto
- JMP 0D0          ; Saltar a end
+ JMP 0D1          ; Saltar a end
  
  ; Si es igual a 360
  LDB EE0          ; Carga 0
  CMP F2C          ; Compara Flag con 0
- JEQ 0BE          ; saltar a menor de 360
+ JEQ 0BF          ; saltar a menor de 360
  
  ; Si es mayor de 360
  MOV AX,F2D       ; carga Numero de UVT
@@ -563,10 +568,7 @@
  0100011011011100
  1110111000000000
  
-#F2E
- 0000000001011111
- 0000000010010110
- 0000000101101000
+#F31
  0011111001000010
  1000111101011100
  0011111010001111
@@ -594,4 +596,16 @@
  0000000000000000
  0000000000000000
  0000000000000000
+ 0000000000000000
+ 
+ #F3B
+ 0100001010111110
+ 0000000000000000
+ 
+ #F2E
+ 0100001100010110
+ 0000000000000000
+ 
+ #F4F
+ 0100001110110100
  0000000000000000
