@@ -384,9 +384,9 @@
  JEQ 0B5          ; Ir a menor de 150
  
  ; Si es menor de 360
- MOV AX,F2D       ; Numero de UVT
- SUB F2F          ; Se resta 150 UVT
- ITOF             ; De 16bits a 32bits
+ LDF F4D       ; Numero de UVT
+ SUBF F2E          ; Se resta 150 UVT
+ NOP
  MULF F33         ; Multiplicar por 28%
  ADDF F3D         ; Sumar 10
  MULF F2A         ; Multiplicar por valor UVT
@@ -399,9 +399,9 @@
  JEQ 0BF          ; saltar a menor de 360
  
  ; Si es mayor de 360
- MOV AX,F2D       ; carga Numero de UVT
- SUB F30          ; Se resta 360 UVT
- ITOF             ; De 16bits a 32bits
+ LDF F4D       ; carga Numero de UVT
+ SUBF F4F          ; Se resta 360 UVT
+ NOP
  MULF F35         ; Multiplicar por 33%
  ADDF F3B         ; Sumar 69
  MULF F2A         ; Multiplicar por valor UVT
@@ -598,14 +598,14 @@
  0000000000000000
  0000000000000000
  
- #F3B
+#F37
  0100001010111110
  0000000000000000
  
- #F2E
+#F2E
  0100001100010110
  0000000000000000
  
- #F4F
+#F4F
  0100001110110100
  0000000000000000
