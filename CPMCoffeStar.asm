@@ -67,8 +67,8 @@
  ; F1C = 19 CONST
  ; F1D = Fondo de solidaridad de un empleado
  ; F1E = Reservado
- ; F20 =
- ; F21 =
+ ; F20 = 150 CONST (16 bits)
+ ; F21 = 360 CONST (16 bits)
  ; F22 = Impuesto Laboral Gravado (ILG)
  ; F23 = Reservado
  ; F24 = Base Gravable
@@ -83,7 +83,7 @@
  ; F2D = Numero de UVT
  ; F2E = 150 CONST
  ; F2F = Reservado
- ; F30 =
+ ; F30 = 95 CONST (16 bits)
  ; F31 = 0.19 CONST
  ; F32 = Reservado
  ; F33 = 0.28 CONST
@@ -332,36 +332,36 @@
  JEQ 09E          ; Si es cero, ir a poner cero en flag
  MOV AX,EE1       ; Carga 1
  MOV F2C,AX       ; Pone Flag de UVT en 1
- JMP 09E          ; END
+ JMP 0A1          ; END
  
  ; Poner cero en flag
  MOV AX,EE0       ; Carga 0
  MOV F2C,AX       ; Pone Flag de UVT en 0
- JMP 0A2          ; END
+ JMP 0A1          ; ir a END
  
- NOP
+ NOP  ;END
  
  ; Impuesto
- MOV AX,F2D       ; Numero de UVT
- CMP F2E          ; Compara con 95
+ MOV AX,F2D       ; ***Numero de UVT
+ CMP F30          ; Compara con 95
  JME 0AD          ; SI es menor de 95
  JEQ 0B2          ; SI es 95 (Preguntar por flag)
  
- CMP F2F          ; Compara con 150
+ CMP F20          ; Compara con 150
  JME 0B5          ; Si es menor de 150
  JEQ 0BC          ; SI es 150 (Preguntar por flag)
  
- CMP F30          ; Compara con 360
+ CMP F21          ; Compara con 360
  JME 0BF          ; Si es menor de 360
  JEQ 0C7          ; SI es 360 (Preguntar por flag)
  JMA 0CA          ; Si es mayor de 360
  
  ; Operaciones
  ; Si es menor de 95
- MOV AX,EE0       ; Carga 0
+ MOV AX,EE0       ; Carga 0 (Si es menor de 95)
  ITOF             ; De 16bits a 32bits
  STF F39          ; Guarda el 0 en el impuesto
- MOV AX,F2D       ; Carga numero de UVT
+ LDF F4D          ; Carga numero de UVT
  JMP 0D1          ; Ir a END
  
  ; Si es igual de 95
@@ -384,8 +384,8 @@
  JEQ 0B5          ; Ir a menor de 150
  
  ; Si es menor de 360
- LDF F4D       ; Numero de UVT
- SUBF F2E          ; Se resta 150 UVT
+ LDF F4D          ; Numero de UVT
+ SUBF F2E         ; Se resta 150 UVT
  NOP
  MULF F33         ; Multiplicar por 28%
  ADDF F3D         ; Sumar 10
@@ -399,8 +399,8 @@
  JEQ 0BF          ; saltar a menor de 360
  
  ; Si es mayor de 360
- LDF F4D       ; carga Numero de UVT
- SUBF F4F          ; Se resta 360 UVT
+ LDF F4D          ; carga Numero de UVT
+ SUBF F4F         ; Se resta 360 UVT
  NOP
  MULF F35         ; Multiplicar por 33%
  ADDF F3B         ; Sumar 69
@@ -558,7 +558,10 @@
  0000000000010001
  0000000000010010
  0000000000010011
- 
+
+#F20
+ 0000000010010110
+ 0000000101101000
  
 #F26
  0011111010000000
@@ -567,6 +570,9 @@
 #F2A
  0100011011011100
  1110111000000000
+ 
+#F30
+ 0000000001011111
  
 #F31
  0011111001000010
