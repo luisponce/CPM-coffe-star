@@ -164,10 +164,10 @@
  MOV EED,AX     ; Guarda lo que esta en AX en Numero salarios minimos en 16bits
  MOV AX,EF1      ; Carga temporal
  CMP EE0         ; comparar si el reciduo de la div es cero
- JEQ 024         ; SI es cero salte a ENTONCES
+ JEQ 025         ; SI es cero salte a ENTONCES
  MOV AX,EE1      ; SINO carga 1 en AX
  MOV EEE,AX     ; Pone el flag en 1 (tiene decimales)
- JMP 026         ; salta a fin si
+ JMP 027         ; salta a fin si
  
  MOV AX,EE0     ; ENTONCES SetFlag, pone AX en cero
  MOV EEE,AX     ; carga 0 en el flag (no tiene decimales)
@@ -242,11 +242,11 @@
  ; Aportes al fondo de solidaridad
  MOV AX,EED       ; Cargar numero de SMLMV
  CMP F17          ; Compara con 4
- JME 084          ; Si es menor que 4 Salta a END
+ JME 087          ; Si es menor que 4 Salta a END
  CMP F16          ; Compara con 3
  JMA 066          ; Si es mayor que 3 ir a 1%
  CMP F18          ; Compara con 15
- JMA 06C          ; Si es mayor que 15 ir a 1.2%
+ JMA 06B          ; Si es mayor que 15 ir a 1.2%
  CMP F19          ; Compara con 16
  JMA 070          ; Si es mayor que 16 ir a 1.4%
  CMP F1A          ; Compara con 17
