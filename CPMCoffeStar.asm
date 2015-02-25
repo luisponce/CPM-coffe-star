@@ -134,7 +134,7 @@
  CMP EE1        ; Compara AX con 1
  JEQ 010        ; Si son iguales salta a ingresar nomina
  CMP EE2        ; Compara AX con 2
- JEQ 0FF        ; Si son iguales salta a totales
+ JEQ 100        ; Si son iguales salta a totales
  CMP EE3        ; Compara AX con 3
  JEQ 00F        ; Si son iguales salta a terminar programa
  MSG Ingrese una opcion valida
